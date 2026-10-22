@@ -1,0 +1,33 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: ledger-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ledger_db
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ledger-network
+
+  app:
+    build: .
+    container_name: ledger-app
+    restart: always
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    networks:
+      - ledger-network
+
+volumes:
+  mongo_data:
+
+networks:
+  ledger-network:
+    driver: bridge
